@@ -1,0 +1,23 @@
+[
+  {
+    "batchId": "BATCH-1001",
+    "exists": true,
+    "orderId": "ORDER-1001",
+    "productionLine": "LINE-1",
+    "productionDate": "2026-05-07"
+  },
+  {
+    "batchId": "B-2026-07-19",
+    "exists": true,
+    "orderId": "MP-2026-1042",
+    "productionLine": "LINE-2",
+    "productionDate": "2026-05-12"
+  },
+  {
+    "batchId": "B-2026-08-03",
+    "exists": true,
+    "orderId": "MP-2026-2048",
+    "productionLine": "LINE-3",
+    "productionDate": "2026-06-02"
+  }
+]

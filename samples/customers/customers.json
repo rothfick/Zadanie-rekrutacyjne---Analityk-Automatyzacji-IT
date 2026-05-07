@@ -1,0 +1,14 @@
+[
+  {
+    "customerId": "CUST-AUTOMOTIVE-PL",
+    "displayName": "Automotive Components Poland",
+    "primaryEmail": "quality@automotive-pl.example",
+    "emailDomain": "automotive-pl.example"
+  },
+  {
+    "customerId": "CUST-NORDIC-MOTORS",
+    "displayName": "Nordic Motors AB",
+    "primaryEmail": "claims@nordic-motors.example",
+    "emailDomain": "nordic-motors.example"
+  }
+]
