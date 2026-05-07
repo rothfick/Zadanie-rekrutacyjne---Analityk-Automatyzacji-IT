@@ -1,0 +1,26 @@
+[
+  {
+    "orderId": "ORDER-1001",
+    "exists": true,
+    "customerId": "CUST-AUTOMOTIVE-PL",
+    "batchId": "BATCH-1001",
+    "productionLine": "LINE-1",
+    "status": "Delivered"
+  },
+  {
+    "orderId": "MP-2026-1042",
+    "exists": true,
+    "customerId": "CUST-AUTOMOTIVE-PL",
+    "batchId": "B-2026-07-19",
+    "productionLine": "LINE-2",
+    "status": "Delivered"
+  },
+  {
+    "orderId": "MP-2026-2048",
+    "exists": true,
+    "customerId": "CUST-NORDIC-MOTORS",
+    "batchId": "B-2026-08-03",
+    "productionLine": "LINE-3",
+    "status": "Delivered"
+  }
+]
