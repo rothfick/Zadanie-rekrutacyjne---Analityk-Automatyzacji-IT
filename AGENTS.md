@@ -2,7 +2,7 @@
 
 ## Cel repozytorium
 
-To repozytorium jest rozwiązaniem zadania rekrutacyjnego na rolę AI Automation Analyst. Przypadek biznesowy dotyczy automatyzacji obsługi reklamacji w firmie Metalpol.
+To repozytorium opisuje i demonstruje rozwiązanie dla przypadku biznesowego Metalpol: automatyzację obsługi reklamacji w firmie produkcyjnej.
 
 Najważniejszy cel: pokazać dojrzałe myślenie analityczne, procesowe i techniczne, a nie maksymalną ilość kodu.
 
@@ -26,7 +26,7 @@ Repozytorium powinno zawierać:
 1. Najpierw jasność biznesowa i procesowa.
 2. Potem spójny model TO-BE i techniczna specyfikacja.
 3. Dopiero potem kod MVP, tylko w zakresie potrzebnym do demonstracji pipeline'u.
-4. Kod ma wspierać narrację rozwiązania, nie zastępować analizy.
+4. Kod ma wspierać opis rozwiązania, nie zastępować analizy.
 
 Każda proponowana automatyzacja musi wynikać z konkretnego problemu biznesowego albo KPI, np. skrócenia czasu pierwszej odpowiedzi, redukcji pracy manualnej, poprawy kompletności danych, lepszej kontroli SLA lub zwiększenia spójności decyzji.
 
@@ -66,7 +66,7 @@ MVP powinno być uruchamialnym mockiem pipeline'u obsługi reklamacji. Preferowa
 W kodzie:
 
 - używaj angielskich nazw klas, metod, namespace'ów, endpointów i testów,
-- zachowaj prostą strukturę projektu, łatwą do przejrzenia w kilka minut,
+- zachowaj prostą strukturę projektu, łatwą do szybkiego przeglądu,
 - mockuj LLM, CRM, ERP, e-mail, storage i inne integracje zewnętrzne,
 - utrzymuj zachowanie LLM w testach deterministyczne,
 - preferuj czytelne typy i jawne przepływy zamiast nadmiarowych abstrakcji.
@@ -86,12 +86,12 @@ W kodzie:
 - Przed commitem sprawdź `git status` i upewnij się, że nie dodajesz przypadkowych plików.
 - Nie commituj sekretów, lokalnych konfiguracji, plików tymczasowych, build artifactów ani danych produkcyjnych.
 
-## Standard przeglądu
+## Standard repozytorium
 
 Repozytorium ma być:
 
-- łatwe do oceny w 5 minut,
-- wystarczająco głębokie, aby obronić decyzje na rozmowie technicznej,
-- spójne biznesowo, procesowo i technicznie,
+- czytelne biznesowo, procesowo i technicznie,
 - wolne od zależności od konkretnego dostawcy AI,
-- nastawione na realną wartość dla procesu reklamacyjnego Metalpol.
+- nastawione na realną wartość dla procesu reklamacyjnego Metalpol,
+- łatwe do uruchomienia lokalnie bez sekretów i zewnętrznych kont,
+- wystarczająco szczegółowe, aby zespół techniczny mógł zaplanować dalszą implementację.

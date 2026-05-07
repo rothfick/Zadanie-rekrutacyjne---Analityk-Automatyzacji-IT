@@ -4,7 +4,7 @@
 
 Ten dokument modeluje obecny proces obsługi reklamacji w Metalpolu. Perspektywa AS-IS pokazuje, że głównym ograniczeniem nie jest brak AI, tylko ręczne łączenie kilku systemów przez specjalistę serwisu.
 
-W obecnym procesie człowiek działa jako integrator między Exchange, Excelem, Jira, SAP, klientem i działem jakości. To powoduje opóźnienia, błędy przepisywania, niespójną klasyfikację oraz brak wiarygodnych metryk.
+W obecnym procesie człowiek działa jako integrator między Microsoft 365 / Exchange, Excelem, Jira Cloud, SAP ERP, klientem i działem jakości. To powoduje opóźnienia, błędy przepisywania, niespójną klasyfikację oraz brak wiarygodnych metryk.
 
 ## Legenda Event Storming
 
@@ -53,15 +53,15 @@ flowchart TD
     taxonomy["Policy / Business Rule<br/>Wizualna / wymiary / materiał / logistyka"]:::policy
     riskCategory["Hotspot / Risk<br/>Subjective categorization"]:::hotspot
 
-    createComplaint["Command<br/>Create Jira Complaint ticket"]:::command
+    createComplaint["Command<br/>Create Jira Cloud Complaint ticket"]:::command
     jira["External System<br/>Jira Cloud"]:::system
     complaintCreated["Domain Event<br/>JiraComplaintCreated"]:::event
 
-    checkSap["Command<br/>Check order and batch in SAP"]:::command
+    checkSap["Command<br/>Check order and batch in SAP ERP"]:::command
     sap["External System<br/>SAP ERP"]:::system
     orderChecked["Domain Event<br/>OrderCheckedInSap"]:::event
     batchChecked["Domain Event<br/>BatchCheckedInSap"]:::event
-    riskDisconnected["Hotspot / Risk<br/>Disconnected SAP / Jira / Excel"]:::hotspot
+    riskDisconnected["Hotspot / Risk<br/>Disconnected SAP ERP / Jira Cloud / Excel"]:::hotspot
 
     prepareReply["Command<br/>Prepare and send customer reply"]:::command
     replyPolicy["Policy / Business Rule<br/>Average response around 2 days from submission"]:::policy
@@ -70,9 +70,9 @@ flowchart TD
     riskSla["Hotspot / Risk<br/>No automated SLA visibility"]:::hotspot
 
     defectConfirmedPolicy["Policy / Business Rule<br/>If defect confirmed"]:::policy
-    createCorrection["Command<br/>Create Jira Correction ticket"]:::command
+    createCorrection["Command<br/>Create Jira Cloud Correction ticket"]:::command
     quality["Actor<br/>Quality department"]:::actor
-    correctionCreated["Domain Event<br/>JiraCorrectionTicketCreated"]:::event
+    correctionCreated["Domain Event<br/>CorrectionTicketCreated"]:::event
 
     riskMetrics["Hotspot / Risk<br/>No reliable metrics"]:::hotspot
 
@@ -118,21 +118,21 @@ flowchart TD
 3. Specjalista serwisu ręcznie czyta wiadomość i interpretuje dane z treści e-maila oraz załączników.
 4. Specjalista ręcznie przepisuje dane do pliku Excel `Rejestr Reklamacji 2026.xlsx`.
 5. Specjalista subiektywnie przypisuje kategorię wady: `wizualna`, `wymiary`, `materiał` albo `logistyka`.
-6. Specjalista tworzy ticket `Complaint` w Jira.
-7. Specjalista sprawdza zamówienie i batch w SAP.
+6. Specjalista tworzy ticket `Complaint` w Jira Cloud.
+7. Specjalista sprawdza zamówienie i batch w SAP ERP.
 8. Specjalista przygotowuje odpowiedź do klienta. Średni czas odpowiedzi wynosi około 2 dni od zgłoszenia.
-9. Jeżeli wada zostanie potwierdzona, specjalista tworzy ticket `Correction` w Jira dla działu jakości.
+9. Jeżeli wada zostanie potwierdzona, specjalista tworzy ticket `Correction` w Jira Cloud dla działu jakości.
 
 ## Hotspoty i ryzyka
 
 | Hotspot | Gdzie występuje | Skutek biznesowy |
 |---|---|---|
-| Spam lub opóźniony e-mail | Wejście przez Exchange | Reklamacja może zostać obsłużona z opóźnieniem albo pominięta |
-| Błędy ręcznego przepisywania | E-mail -> Excel -> Jira / SAP | Błędny numer zamówienia, batch, dane klienta lub kategoria |
+| Spam lub opóźniony e-mail | Wejście przez Microsoft 365 / Exchange | Reklamacja może zostać obsłużona z opóźnieniem albo pominięta |
+| Błędy ręcznego przepisywania | E-mail -> Excel -> Jira Cloud / SAP ERP | Błędny numer zamówienia, batch, dane klienta lub kategoria |
 | Excel jako słaby system of record | Rejestr reklamacji | Brak kontroli wersji, brak audytu zdarzeń, trudny centralny status |
 | Subiektywna kategoryzacja | Klasyfikacja wady przez specjalistę | Niespójne raportowanie przyczyn reklamacji |
-| Brak wiarygodnych metryk | Excel, Jira i SAP jako rozproszone źródła | Brak jasnego SLA, backlogu, trendów i obciążenia zespołu |
-| Rozłączone SAP / Jira / Excel | Walidacja orderu, batcha i ticketów | Specjalista musi ręcznie przenosić kontekst między systemami |
+| Brak wiarygodnych metryk | Excel, Jira Cloud i SAP ERP jako rozproszone źródła | Brak jasnego SLA, backlogu, trendów i obciążenia zespołu |
+| Rozłączone SAP ERP / Jira Cloud / Excel | Walidacja orderu, batcha i ticketów | Specjalista musi ręcznie przenosić kontekst między systemami |
 | Backlog 2-3 dni | Wysoki wolumen reklamacji | Wydłużony czas odpowiedzi i mniejsza przewidywalność pracy |
 | Brak automatycznej widoczności SLA | Cały proces | Management widzi problem dopiero po fakcie |
 
@@ -140,6 +140,6 @@ flowchart TD
 
 Proces traci czas na wejściu, bo skrzynka e-mail nie jest kontrolowanym mechanizmem intake. Jeżeli wiadomość trafi do spamu albo zostanie przeczytana później, dalsze kroki procesu nie mogą się rozpocząć. Brak automatycznego monitoringu oznacza, że opóźnienie jest wykrywane dopiero wtedy, gdy ktoś ręcznie sprawdzi skrzynkę albo klient ponowi kontakt.
 
-Proces traci jakość danych w momentach ręcznego przepisywania i subiektywnej klasyfikacji. Ten sam e-mail jest interpretowany przez człowieka, przepisywany do Excela, odtwarzany w Jira i weryfikowany w SAP. Każde przejście między narzędziami zwiększa ryzyko pomyłki oraz utrudnia późniejsze odtworzenie, skąd pochodziła konkretna informacja.
+Proces traci jakość danych w momentach ręcznego przepisywania i subiektywnej klasyfikacji. Ten sam e-mail jest interpretowany przez człowieka, przepisywany do Excela, odtwarzany w Jira Cloud i weryfikowany w SAP ERP. Każde przejście między narzędziami zwiększa ryzyko pomyłki oraz utrudnia późniejsze odtworzenie, skąd pochodziła konkretna informacja.
 
-Proces traci widoczność, ponieważ nie ma jednego timeline'u reklamacji ani spójnego event store. Excel, Jira i SAP przechowują różne fragmenty sprawy, ale nie dają pełnego obrazu SLA, backlogu, czasu pierwszej odpowiedzi, typów wad ani problematycznych partii produkcyjnych. W praktyce management nie ma bieżącego dashboardu, a specjalista serwisu jest jedyną osobą, która zna pełny kontekst operacyjny konkretnej reklamacji.
+Proces traci widoczność, ponieważ nie ma jednego timeline'u reklamacji ani spójnego event store. Excel, Jira Cloud i SAP ERP przechowują różne fragmenty sprawy, ale nie dają pełnego obrazu SLA, backlogu, czasu pierwszej odpowiedzi, typów wad ani problematycznych partii produkcyjnych. W praktyce management nie ma bieżącego dashboardu, a specjalista serwisu jest jedyną osobą, która zna pełny kontekst operacyjny konkretnej reklamacji.
