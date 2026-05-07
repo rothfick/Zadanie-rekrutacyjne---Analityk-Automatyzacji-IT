@@ -1,0 +1,14 @@
+{
+  "sourceMessageId": "scenario-dimensional-low-confidence",
+  "from": "quality@automotive-pl.example",
+  "subject": "Complaint ORDER-1001 - possible dimension issue",
+  "body": "The part may be outside tolerance by 2 mm, but the photo is unclear and we are not sure. Batch BATCH-1001. Please verify dimensions before any final answer.",
+  "attachments": [
+    {
+      "attachmentId": "att-dimension-001",
+      "fileName": "unclear-measurement.jpg",
+      "contentType": "image/jpeg",
+      "sizeBytes": 1966080
+    }
+  ]
+}

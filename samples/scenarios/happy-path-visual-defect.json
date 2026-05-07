@@ -1,0 +1,20 @@
+{
+  "sourceMessageId": "scenario-happy-visual-defect",
+  "from": "quality@automotive-pl.example",
+  "subject": "Complaint ORDER-1001 - visible scratches",
+  "body": "Hello, we found scratches and paint damage on delivered parts. Batch BATCH-1001. Please register this complaint and confirm next steps.",
+  "attachments": [
+    {
+      "attachmentId": "att-visual-001",
+      "fileName": "visual-defect-photo-1.jpg",
+      "contentType": "image/jpeg",
+      "sizeBytes": 1843200
+    },
+    {
+      "attachmentId": "att-visual-002",
+      "fileName": "visual-defect-photo-2.jpg",
+      "contentType": "image/jpeg",
+      "sizeBytes": 1597440
+    }
+  ]
+}
