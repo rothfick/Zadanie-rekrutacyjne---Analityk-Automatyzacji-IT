@@ -1,0 +1,14 @@
+{
+  "sourceMessageId": "scenario-missing-order-number",
+  "from": "claims@nordic-motors.example",
+  "subject": "Reklamacja - rysy na elemencie",
+  "body": "Dzień dobry, zgłaszamy rysy na lakierze dostarczonych elementów. W załączeniu zdjęcia wady. Nie mamy przy sobie numeru zamówienia.",
+  "attachments": [
+    {
+      "attachmentId": "att-missing-order-001",
+      "fileName": "rysy-na-elemencie.jpg",
+      "contentType": "image/jpeg",
+      "sizeBytes": 1425408
+    }
+  ]
+}

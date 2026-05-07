@@ -1,0 +1,14 @@
+{
+  "sourceMessageId": "scenario-logistics-complaint",
+  "from": "claims@nordic-motors.example",
+  "subject": "Complaint ORDER-1001 - missing package items",
+  "body": "The delivery package is missing several items and one wrong item was included. Batch BATCH-1001. Please route this as a logistics complaint.",
+  "attachments": [
+    {
+      "attachmentId": "att-logistics-001",
+      "fileName": "package-content.jpg",
+      "contentType": "image/jpeg",
+      "sizeBytes": 1105920
+    }
+  ]
+}

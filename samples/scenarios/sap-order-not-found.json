@@ -1,0 +1,14 @@
+{
+  "sourceMessageId": "scenario-sap-order-not-found",
+  "from": "quality@automotive-pl.example",
+  "subject": "Complaint ORDER-9999 - paint defect",
+  "body": "We found paint damage and scratches on parts from ORDER-9999. Batch BATCH-9999. Please verify because the customer expects a quick response.",
+  "attachments": [
+    {
+      "attachmentId": "att-sap-missing-001",
+      "fileName": "paint-defect.jpg",
+      "contentType": "image/jpeg",
+      "sizeBytes": 1212416
+    }
+  ]
+}

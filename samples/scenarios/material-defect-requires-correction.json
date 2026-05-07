@@ -1,0 +1,20 @@
+{
+  "sourceMessageId": "scenario-material-defect-correction",
+  "from": "quality@automotive-pl.example",
+  "subject": "Complaint ORDER-1001 - material crack",
+  "body": "We detected a material crack and hardness issue in parts from ORDER-1001. Batch BATCH-1001. Please register the complaint for quality review.",
+  "attachments": [
+    {
+      "attachmentId": "att-material-001",
+      "fileName": "material-crack.jpg",
+      "contentType": "image/jpeg",
+      "sizeBytes": 2031616
+    },
+    {
+      "attachmentId": "att-material-002",
+      "fileName": "hardness-report.pdf",
+      "contentType": "application/pdf",
+      "sizeBytes": 327680
+    }
+  ]
+}
