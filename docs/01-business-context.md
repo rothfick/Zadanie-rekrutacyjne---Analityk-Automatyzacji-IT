@@ -18,7 +18,7 @@ Dostępne systemy w obecnym środowisku:
 - Excel jako ręczny rejestr reklamacji,
 - Jira Cloud jako system ticketowy dla reklamacji i korekt jakościowych,
 - SAP ERP jako źródło danych o zamówieniach i partiach,
-- wewnętrzna baza klientów PostgreSQL w trybie read-only,
+- wewnętrzna PostgreSQL customer DB w trybie read-only,
 - Azure Blob Storage jako archiwum zdjęć wad.
 
 Wolumen procesu:
@@ -26,15 +26,15 @@ Wolumen procesu:
 - średnio około 600 reklamacji miesięcznie,
 - sezonowe szczyty do około 2000 reklamacji miesięcznie,
 - typowy e-mail ma około 150 słów i od 1 do 3 zdjęć,
-- większość reklamacji można ocenić na podstawie danych z SAP, danych operatora, batcha i parametrów produkcji.
+- większość reklamacji można ocenić na podstawie danych z SAP ERP, danych operatora, batcha i parametrów produkcji.
 
 ## Obecny proces w skrócie
 
-Obecnie proces reklamacji jest oparty na ręcznej pracy specjalisty serwisu. Klient wysyła e-mail z opisem, numerem zamówienia i zdjęciami. Specjalista czyta wiadomość, przepisuje dane do Excela, kategoryzuje wadę, tworzy zgłoszenie `Complaint` w Jira, sprawdza zamówienie i batch w SAP, a następnie przygotowuje odpowiedź do klienta.
+Obecnie proces reklamacji jest oparty na ręcznej pracy specjalisty serwisu. Klient wysyła e-mail z opisem, numerem zamówienia i zdjęciami. Specjalista czyta wiadomość, przepisuje dane do Excela, kategoryzuje wadę, tworzy zgłoszenie `Complaint` w Jira Cloud, sprawdza zamówienie i batch w SAP ERP, a następnie przygotowuje odpowiedź do klienta.
 
-Jeżeli wada zostanie potwierdzona, specjalista tworzy dodatkowy ticket korygujący dla działu jakości w Jira jako `Correction`.
+Jeżeli wada zostanie potwierdzona, specjalista tworzy dodatkowy ticket korygujący dla działu jakości w Jira Cloud jako `Correction`.
 
-Najważniejszy problem procesu AS-IS: człowiek pełni rolę integratora systemów. Exchange, Excel, Jira, SAP, baza klientów, zdjęcia i dział jakości nie tworzą jednego spójnego przepływu. Status reklamacji, metryki i decyzje są rozproszone między narzędziami oraz ręcznymi czynnościami.
+Najważniejszy problem procesu AS-IS: człowiek pełni rolę integratora systemów. Microsoft 365 / Exchange, Excel, Jira Cloud, SAP ERP, baza klientów, zdjęcia i dział jakości nie tworzą jednego spójnego przepływu. Status reklamacji, metryki i decyzje są rozproszone między narzędziami oraz ręcznymi czynnościami.
 
 ## Użytkownicy i interesariusze
 
@@ -61,7 +61,7 @@ Skutek biznesowy: klient długo czeka na reakcję, a firma traci kontrolę nad S
 
 - Jeden specjalista obsługuje 30-80 reklamacji dziennie.
 - Dane z maila są ręcznie przepisywane do Excela.
-- Specjalista ręcznie przechodzi między Exchange, Excelem, Jira i SAP.
+- Specjalista ręcznie przechodzi między Microsoft 365 / Exchange, Excelem, Jira Cloud i SAP ERP.
 
 Skutek biznesowy: czas specjalisty jest zużywany na przenoszenie danych, a nie na ocenę reklamacji i kontakt z klientem.
 
@@ -82,7 +82,7 @@ Skutek biznesowy: management nie ma operacyjnego dashboardu do podejmowania decy
 
 ### Rozłączone systemy
 
-- SAP i Jira nie komunikują się bezpośrednio.
+- SAP ERP i Jira Cloud nie komunikują się bezpośrednio.
 - Excel pełni rolę ręcznego łącznika między systemami.
 - Zdjęcia wad, dane reklamacji, statusy i ticket jakościowy nie są zarządzane jako jeden proces.
 
@@ -97,22 +97,25 @@ Skutek biznesowy: status sprawy jest trudny do odtworzenia, a każda reklamacja 
 
 Skutek biznesowy: proces zależy od pamięci i dokładności pojedynczych osób, a nie od kontrolowanego mechanizmu operacyjnego.
 
-## Mapowanie problemów na mechanizmy TO-BE i KPI
+## Analiza biznesowa: problem, przyczyna, mechanizm i KPI
 
-| Problem CEO | Mechanizm w TO-BE | KPI |
-|---|---|---|
-| 40% maili trafia do spamu lub jest czytane z opóźnieniem | Microsoft Graph webhook + fallback polling + monitoring nieprzetworzonych maili | Time to ingest, missed messages |
-| Jeden specjalista obsługuje 30-80 reklamacji dziennie | Automatyczny intake, draft odpowiedzi, routing przypadków | Throughput per specialist, backlog |
-| Niespójna kategoryzacja wad | Kontrolowana taksonomia + AI classification + confidence + review | Classification accuracy, manual correction rate |
-| Brak metryk | Event store + dashboard KPI | SLA breaches, average first response time |
-| SAP, Jira i Excel nie komunikują się | Orchestrator + API adapters + centralny status reklamacji | Manual touches per complaint |
-| 2 dni do odpowiedzi | Auto draft + szybka walidacja SAP | First response time |
-| Brak informacji o liniach i partiach generujących problemy | Korelacja order / batch / production line | Complaints per line, complaints per batch |
+Poniższa tabela jest główną mapą wartości biznesowej rozwiązania. Każdy mechanizm TO-BE ma sens tylko wtedy, gdy usuwa konkretną przyczynę problemu i pozwala zmierzyć poprawę.
+
+| Zgłoszony problem CEO | Root cause | Proponowany mechanizm w TO-BE | KPI mierzący poprawę | Oczekiwany wpływ biznesowy |
+|---|---|---|---|---|
+| 40% maili trafia do spamu lub jest czytane z opóźnieniem | Skrzynka e-mail jest pasywnym kanałem, bez automatycznego intake, fallbacku i monitoringu nieprzetworzonych wiadomości | Microsoft Graph webhook, fallback polling, rejestr `EmailReceived`, alert dla wiadomości bez dalszego przetworzenia | Time to ingest email, missed messages, SLA breach count | Mniej pominiętych reklamacji, szybszy start procesu, lepsza kontrola SLA od pierwszego kontaktu |
+| Średnia odpowiedź do klienta trwa około 2 dni | Specjalista najpierw ręcznie czyta mail, przepisuje dane, sprawdza SAP ERP i dopiero potem przygotowuje odpowiedź | Automatyczny intake, AI extraction, walidacja SAP ERP / PostgreSQL customer DB, draft odpowiedzi do przeglądu | First response time, time to ingest email, percent of complaints requiring manual review | Krótszy czas pierwszej odpowiedzi i więcej czasu specjalisty na ocenę merytoryczną |
+| Jeden specjalista obsługuje 30-80 reklamacji dziennie | Duża część pracy to powtarzalne przepisywanie, zakładanie ticketów i zbieranie kontekstu z systemów | Orchestrator procesu, automatyczne tworzenie rekordu reklamacji, mock Jira Cloud `Complaint`, routing przypadków do człowieka | Backlog size, average resolution time, Jira issue creation success rate | Większa przepustowość zespołu i mniejsze ryzyko narastania backlogu w szczytach sezonowych |
+| Kategoryzacja wad jest niespójna między specjalistami | Brak kontrolowanej taksonomii, brak confidence i brak mechanizmu korekty klasyfikacji | Kontrolowana taksonomia, AI classification, confidence score, human review dla niskiej pewności, zapis korekt | Complaint count by defect category, AI extraction confidence distribution, classification correction rate | Wiarygodniejsze raportowanie przyczyn reklamacji i lepsze dane dla jakości oraz produkcji |
+| Brak metryk o reklamacjach, SLA i typach wad | Dane są rozproszone między e-mailem, Excelem, Jira Cloud i SAP ERP, bez wspólnego timeline'u zdarzeń | Event store dla reklamacji, centralny status, dashboard KPI z widokiem operacyjnym i zarządczym | SLA breach count, first response time, average resolution time, backlog size | Zarząd widzi trend i skalę problemu, a nie tylko pojedyncze eskalacje |
+| SAP ERP, Jira Cloud i Excel nie komunikują się ze sobą | Specjalista ręcznie przenosi dane między systemami i utrzymuje kontekst sprawy w głowie | API adapters, orchestrator, centralny identyfikator reklamacji, status procesu i timeline | Jira issue creation success rate, SAP verification failure rate, manual touches per complaint | Mniej pracy ręcznej, mniej błędów i łatwiejsze odtworzenie historii sprawy |
+| Brak informacji o liniach i partiach generujących problemy | Reklamacja nie jest konsekwentnie korelowana z orderem, batchem i linią produkcyjną | Walidacja order/batch w SAP ERP, dołączenie production line do rekordu reklamacji, raportowanie trendów | Complaint count by production line, complaint count by batch, SAP verification failure rate | Produkcja może szybciej wskazać źródło problemów i priorytetyzować działania korygujące |
+| Ryzyko operacyjne rośnie przy brakujących danych | Braki w mailu są wykrywane późno, często dopiero podczas ręcznej obsługi | Wczesna walidacja pól wymaganych, lista `missingFields`, status `HumanReviewRequired`, draft prośby o uzupełnienie | Percent of complaints requiring manual review, average resolution time, SLA breach count | Szybsze wykrywanie spraw niekompletnych i mniej reklamacji zatrzymanych w niejasnym stanie |
 
 ## Cele automatyzacji
 
 1. Skrócić czas od wpływu maila do utworzenia sprawy reklamacyjnej.
-2. Ograniczyć ręczne przepisywanie danych między Exchange, Excelem, Jira i SAP.
+2. Ograniczyć ręczne przepisywanie danych między Microsoft 365 / Exchange, Excelem, Jira Cloud i SAP ERP.
 3. Ujednolicić klasyfikację wad przez kontrolowaną taksonomię i wynik klasyfikacji z confidence.
 4. Wykrywać brakujące dane wcześniej, zanim sprawa utknie w ręcznej obsłudze.
 5. Generować draft odpowiedzi do klienta, aby specjalista mógł szybciej przejść do merytorycznej weryfikacji.
@@ -124,13 +127,13 @@ Skutek biznesowy: proces zależy od pamięci i dokładności pojedynczych osób,
 
 ### W zakresie MVP
 
-- Mock endpoint przyjmujący wiadomość reklamacyjną z Exchange.
+- Mock endpoint przyjmujący wiadomość reklamacyjną z Microsoft 365 / Exchange.
 - Utworzenie rekordu reklamacji.
 - Mock AI triage wyciągający `orderId`, język, opis, kategorię wady, confidence i brakujące pola.
-- Dopasowanie klienta przez mock customer DB.
-- Sprawdzenie zamówienia i batcha przez mock SAP.
-- Zapis załączników jako fake URI w mock Blob Storage.
-- Utworzenie mock `Complaint` w Jira.
+- Dopasowanie klienta przez mock PostgreSQL customer DB.
+- Sprawdzenie zamówienia i batcha przez mock SAP ERP.
+- Zapis załączników jako fake URI w mock Azure Blob Storage.
+- Utworzenie mock `Complaint` w Jira Cloud.
 - Wygenerowanie draftu odpowiedzi.
 - Przekazanie sprawy do `HumanReviewRequired`, gdy confidence jest niskie albo brakuje danych.
 - Endpoint zatwierdzenia przez człowieka, po którym system tworzy mock `Correction`.
@@ -138,7 +141,7 @@ Skutek biznesowy: proces zależy od pamięci i dokładności pojedynczych osób,
 
 ### Poza zakresem MVP
 
-- Produkcyjna integracja z Microsoft Graph, SAP, Jira, PostgreSQL i Azure Blob Storage.
+- Produkcyjna integracja z Microsoft Graph, SAP ERP, Jira Cloud, PostgreSQL customer DB i Azure Blob Storage.
 - Prawdziwy model LLM, prompt tuning, fine-tuning lub ocena jakości modelu na dużym zbiorze danych.
 - Automatyczne podejmowanie finalnych decyzji reklamacyjnych.
 - Pełny panel UI dla specjalisty serwisu, działu jakości lub managementu.
@@ -150,7 +153,7 @@ Skutek biznesowy: proces zależy od pamięci i dokładności pojedynczych osób,
 ## Założenia
 
 - Metalpol jest firmą fikcyjną, a wszystkie dane w repozytorium powinny być przykładowe.
-- Źródłem prawdy dla zamówień i batchy pozostaje SAP.
+- Źródłem prawdy dla zamówień i batchy pozostaje SAP ERP.
 - Źródłem prawdy dla decyzji reklamacyjnej pozostaje człowiek oraz uzgodnione reguły biznesowe.
 - AI jest komponentem pomocniczym do ekstrakcji, klasyfikacji, streszczania i przygotowania draftów.
 - W MVP wszystkie integracje zewnętrzne są mockowane.
@@ -165,8 +168,8 @@ Skutek biznesowy: proces zależy od pamięci i dokładności pojedynczych osób,
 - Jakie dane są minimalnie wymagane do przyjęcia reklamacji?
 - Jak obsługiwać reklamacje bez numeru zamówienia albo z niepoprawnym batchem?
 - Czy kategorie `wizualna`, `wymiary`, `materiał` i `logistyka` są wystarczające, czy wymagają podkategorii?
-- Jak wygląda obecny workflow ticketów `Complaint` i `Correction` w Jira?
-- Jakie dane o linii produkcyjnej i parametrach produkcji są dostępne przez SAP?
+- Jak wygląda obecny workflow ticketów `Complaint` i `Correction` w Jira Cloud?
+- Jakie dane o linii produkcyjnej i parametrach produkcji są dostępne przez SAP ERP?
 - Kto zatwierdza draft odpowiedzi do klienta i kiedy można go wysłać?
 - Jak długo przechowywać zdjęcia wad i kto powinien mieć do nich dostęp?
 - Jak mierzyć baseline KPI przed wdrożeniem automatyzacji?
