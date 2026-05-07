@@ -1,0 +1,45 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Metalpol.Complaints.Domain", "src\Metalpol.Complaints.Domain\Metalpol.Complaints.Domain.csproj", "{1B3C2D4E-5F60-4781-9A2B-3C4D5E6F7081}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Metalpol.Complaints.Application", "src\Metalpol.Complaints.Application\Metalpol.Complaints.Application.csproj", "{2C4D5E6F-7081-492A-B3C4-D5E6F708192A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Metalpol.Complaints.Infrastructure", "src\Metalpol.Complaints.Infrastructure\Metalpol.Complaints.Infrastructure.csproj", "{3D5E6F70-8192-4AB3-C4D5-E6F708192A3B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Metalpol.Complaints.Api", "src\Metalpol.Complaints.Api\Metalpol.Complaints.Api.csproj", "{4E6F7081-92A3-4BC4-D5E6-F708192A3B4C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Metalpol.Complaints.Tests", "tests\Metalpol.Complaints.Tests\Metalpol.Complaints.Tests.csproj", "{5F708192-A3B4-4CD5-E6F7-08192A3B4C5D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1B3C2D4E-5F60-4781-9A2B-3C4D5E6F7081}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1B3C2D4E-5F60-4781-9A2B-3C4D5E6F7081}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1B3C2D4E-5F60-4781-9A2B-3C4D5E6F7081}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1B3C2D4E-5F60-4781-9A2B-3C4D5E6F7081}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2C4D5E6F-7081-492A-B3C4-D5E6F708192A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2C4D5E6F-7081-492A-B3C4-D5E6F708192A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2C4D5E6F-7081-492A-B3C4-D5E6F708192A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2C4D5E6F-7081-492A-B3C4-D5E6F708192A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3D5E6F70-8192-4AB3-C4D5-E6F708192A3B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3D5E6F70-8192-4AB3-C4D5-E6F708192A3B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3D5E6F70-8192-4AB3-C4D5-E6F708192A3B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3D5E6F70-8192-4AB3-C4D5-E6F708192A3B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4E6F7081-92A3-4BC4-D5E6-F708192A3B4C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4E6F7081-92A3-4BC4-D5E6-F708192A3B4C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4E6F7081-92A3-4BC4-D5E6-F708192A3B4C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4E6F7081-92A3-4BC4-D5E6-F708192A3B4C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5F708192-A3B4-4CD5-E6F7-08192A3B4C5D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5F708192-A3B4-4CD5-E6F7-08192A3B4C5D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5F708192-A3B4-4CD5-E6F7-08192A3B4C5D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5F708192-A3B4-4CD5-E6F7-08192A3B4C5D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
