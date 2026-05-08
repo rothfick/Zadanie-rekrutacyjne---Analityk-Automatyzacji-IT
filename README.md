@@ -1,24 +1,24 @@
 # Metalpol AI Complaint Automation
 
-Metalpol AI Complaint Automation is a complaint handling automation case study for a fictional metal components manufacturer. The repository combines business analysis, Event Storming, architecture documentation, AI guardrails and a runnable .NET demo MVP. AI supports extraction, classification, summary and response drafting; deterministic process logic and human review remain responsible for validation and final business decisions.
+Metalpol AI Complaint Automation to case study automatyzacji obsługi reklamacji dla fikcyjnego producenta komponentów metalowych. Repozytorium łączy analizę biznesową, Event Storming, dokumentację architektury, guardraile dla AI oraz uruchamialne demo MVP w .NET. AI wspiera ekstrakcję danych, klasyfikację, streszczenie i przygotowanie szkicu odpowiedzi; za walidację oraz końcowe decyzje biznesowe odpowiadają deterministyczna logika procesu i człowiek.
 
-## What This Repository Contains
+## Co Zawiera Repozytorium
 
-- Business and process documentation for the Metalpol complaint handling case.
-- AS-IS and TO-BE Event Storming models.
-- Technical solution specification with integration boundaries and trade-offs.
-- AI automation design focused on triage, extraction, draft support and guardrails.
-- Integration contracts for Microsoft 365 / Exchange, SAP ERP, Jira Cloud, PostgreSQL customer DB and Azure Blob Storage.
-- Complaint state machine, edge case catalogue and KPI/reporting model.
-- Architecture Decision Records in [docs/adr](docs/adr).
-- Runnable .NET mock MVP with Minimal API, orchestrator, domain model, deterministic fake adapters, sample scenarios and tests.
-- Static demo UI served by the API.
+- Dokumentację biznesową i procesową dla przypadku obsługi reklamacji w Metalpol.
+- Modele Event Storming AS-IS oraz TO-BE.
+- Specyfikację techniczną rozwiązania z granicami integracji i trade-offami.
+- Projekt automatyzacji AI skupiony na triage, ekstrakcji, wsparciu draftów i guardrailach.
+- Kontrakty integracyjne dla Microsoft 365 / Exchange, SAP ERP, Jira Cloud, PostgreSQL customer DB i Azure Blob Storage.
+- Maszynę stanów reklamacji, katalog edge case'ów oraz model KPI/reportingu.
+- Architecture Decision Records w [docs/adr](docs/adr).
+- Uruchamialne mock MVP w .NET z Minimal API, orchestrator, modelem domenowym, deterministycznymi adapterami, scenariuszami demo i testami.
+- Statyczny demo UI serwowany przez API.
 
-Terminology: business documentation uses the Polish term **reklamacja**. Code, namespaces, API contracts, statuses, events and Jira issue types use the English term **Complaint**.
+Terminologia: dokumentacja biznesowa używa polskiego terminu **reklamacja**. Kod, namespace'y, kontrakty API, statusy, eventy i typy issue w Jira używają angielskiego terminu **Complaint**.
 
-## How To Run Locally
+## Jak Uruchomić Lokalnie
 
-Required SDK: .NET matching the project target framework (`net10.0`).
+Wymagany SDK: .NET zgodny z target framework projektu (`net10.0`).
 
 ```bash
 dotnet restore Metalpol.Complaints.sln
@@ -27,33 +27,33 @@ dotnet test Metalpol.Complaints.sln
 dotnet run --project src/Metalpol.Complaints.Api --urls http://127.0.0.1:5058
 ```
 
-Shell demo:
+Demo w shellu:
 
 ```bash
 chmod +x scripts/demo.sh
 BASE_URL=http://127.0.0.1:5058 ./scripts/demo.sh
 ```
 
-PowerShell demo:
+Demo w PowerShell:
 
 ```powershell
 $env:BASE_URL = "http://127.0.0.1:5058"
 ./scripts/demo.ps1
 ```
 
-## How To Open The UI
+## Jak Otworzyć UI
 
-After starting the API, open:
+Po uruchomieniu API otwórz:
 
 ```text
 http://127.0.0.1:5058/
 ```
 
-The UI lets a demo user select a sample complaint, run the automation pipeline, inspect complaint details and timeline events, perform human review, create a mock Jira Correction and refresh KPI cards. The same flow remains available through API endpoints and scripts.
+UI pozwala wybrać przykładową reklamację, uruchomić pipeline automatyzacji, przejrzeć szczegóły reklamacji i eventy timeline, wykonać human review, utworzyć mock Jira Correction oraz odświeżyć karty KPI. Ten sam przepływ jest dostępny przez endpointy API i skrypty.
 
-## Demo Scenarios
+## Scenariusze Demo
 
-Scenario payloads are stored in [samples/scenarios](samples/scenarios). Any scenario can be posted directly:
+Payloady scenariuszy znajdują się w [samples/scenarios](samples/scenarios). Każdy scenariusz można wysłać bezpośrednio:
 
 ```bash
 curl -sS -X POST http://127.0.0.1:5058/api/mock/exchange/messages \
@@ -61,18 +61,18 @@ curl -sS -X POST http://127.0.0.1:5058/api/mock/exchange/messages \
   --data @samples/scenarios/happy-path-visual-defect.json
 ```
 
-| Scenario | Expected result | Purpose |
+| Scenariusz | Oczekiwany wynik | Cel |
 | --- | --- | --- |
-| [happy-path-visual-defect.json](samples/scenarios/happy-path-visual-defect.json) | `ResponseDrafted`, Jira Cloud `Complaint` | Standard flow without manual data copying. |
-| [missing-order-number.json](samples/scenarios/missing-order-number.json) | `HumanReviewRequired`, no Jira Cloud `Complaint` | AI does not invent critical data. |
-| [dimensional-defect-low-confidence.json](samples/scenarios/dimensional-defect-low-confidence.json) | `HumanReviewRequired` | Low confidence routes the case to a human. |
-| [sap-order-not-found.json](samples/scenarios/sap-order-not-found.json) | `HumanReviewRequired`, SAP ERP mismatch | Jira Cloud `Complaint` is not created without order validation. |
-| [prompt-injection-attempt.json](samples/scenarios/prompt-injection-attempt.json) | `PromptInjectionDetected` | Customer email body is treated as untrusted input. |
-| [duplicate-message.json](samples/scenarios/duplicate-message.json) | Existing complaint without a second Jira Cloud `Complaint` | Idempotency by `sourceMessageId`. |
-| [logistics-complaint.json](samples/scenarios/logistics-complaint.json) | `Logistics` | Controlled defect taxonomy supports reporting. |
-| [material-defect-requires-correction.json](samples/scenarios/material-defect-requires-correction.json) | Correction after approval | AI prepares context; a human confirms the quality decision. |
+| [happy-path-visual-defect.json](samples/scenarios/happy-path-visual-defect.json) | `ResponseDrafted`, Jira Cloud `Complaint` | Standardowy przepływ bez ręcznego przepisywania danych. |
+| [missing-order-number.json](samples/scenarios/missing-order-number.json) | `HumanReviewRequired`, bez Jira Cloud `Complaint` | AI nie wymyśla krytycznych danych. |
+| [dimensional-defect-low-confidence.json](samples/scenarios/dimensional-defect-low-confidence.json) | `HumanReviewRequired` | Niska pewność kieruje sprawę do człowieka. |
+| [sap-order-not-found.json](samples/scenarios/sap-order-not-found.json) | `HumanReviewRequired`, niezgodność w SAP ERP | Jira Cloud `Complaint` nie jest tworzony bez walidacji zamówienia. |
+| [prompt-injection-attempt.json](samples/scenarios/prompt-injection-attempt.json) | `PromptInjectionDetected` | Treść maila klienta jest traktowana jako niezaufane wejście. |
+| [duplicate-message.json](samples/scenarios/duplicate-message.json) | Istniejąca reklamacja bez drugiego Jira Cloud `Complaint` | Idempotencja po `sourceMessageId`. |
+| [logistics-complaint.json](samples/scenarios/logistics-complaint.json) | `Logistics` | Kontrolowana taksonomia wad wspiera raportowanie. |
+| [material-defect-requires-correction.json](samples/scenarios/material-defect-requires-correction.json) | Correction po akceptacji | AI przygotowuje kontekst, a człowiek potwierdza decyzję jakościową. |
 
-## Architecture Overview
+## Przegląd Architektury
 
 ```text
 Microsoft 365 / Exchange webhook
@@ -88,47 +88,47 @@ Microsoft 365 / Exchange webhook
   -> KPI read model
 ```
 
-Code layers:
+Warstwy kodu:
 
-- [Domain](src/Metalpol.Complaints.Domain) - `Complaint` aggregate, statuses, value objects and domain events.
-- [Application](src/Metalpol.Complaints.Application) - orchestration, ports, DTOs and human review flow.
-- [Infrastructure](src/Metalpol.Complaints.Infrastructure) - deterministic fake adapters and sample data.
-- [API](src/Metalpol.Complaints.Api) - Minimal API for mock intake, complaint details, timeline, review approval, demo reset and KPI.
-- [Demo UI](src/Metalpol.Complaints.Api/wwwroot) - static UI served by the API.
-- [Tests](tests/Metalpol.Complaints.Tests) - unit tests, API smoke tests, edge cases and Playwright UI E2E.
+- [Domain](src/Metalpol.Complaints.Domain) - agregat `Complaint`, statusy, value objects i domain events.
+- [Application](src/Metalpol.Complaints.Application) - orkiestracja, porty, DTO i przepływ human review.
+- [Infrastructure](src/Metalpol.Complaints.Infrastructure) - deterministyczne fake adapters i dane przykładowe.
+- [API](src/Metalpol.Complaints.Api) - Minimal API dla mock intake, szczegółów reklamacji, timeline, review approval, demo reset i KPI.
+- [Demo UI](src/Metalpol.Complaints.Api/wwwroot) - statyczny interfejs serwowany przez API.
+- [Tests](tests/Metalpol.Complaints.Tests) - testy jednostkowe, API smoke tests, edge case'y i Playwright UI E2E.
 
-## What Is Mocked And Why
+## Co Jest Mockowane I Dlaczego
 
-The demo MVP does not use real credentials, customer data or external accounts. External dependencies are represented by deterministic adapters:
+Demo MVP nie używa prawdziwych credentiali, danych klientów ani zewnętrznych kont. Zależności zewnętrzne są reprezentowane przez deterministyczne adaptery:
 
 - Microsoft 365 / Exchange - mock endpoint `POST /api/mock/exchange/messages`.
-- SAP ERP - sample orders and batches from [samples/sap](samples/sap).
-- Jira Cloud - fake keys such as `COMPLAINT-*` and `CORRECTION-*`.
-- Azure Blob Storage - fake attachment URIs, no real SAS tokens.
-- PostgreSQL customer DB - read-only sample customers from [samples/customers](samples/customers).
-- AI triage - deterministic parser/classifier so tests and demos remain repeatable.
+- SAP ERP - przykładowe zamówienia i partie z [samples/sap](samples/sap).
+- Jira Cloud - fake keys, np. `COMPLAINT-*` i `CORRECTION-*`.
+- Azure Blob Storage - fake URI załączników, bez prawdziwych SAS tokens.
+- PostgreSQL customer DB - read-only przykładowi klienci z [samples/customers](samples/customers).
+- AI triage - deterministyczny parser/classifier, dzięki któremu testy i demo są powtarzalne.
 
-Mocks keep the demo credential-free and locally runnable while preserving integration contracts and ownership boundaries.
+Mocki utrzymują demo bez credentiali i pozwalają uruchomić je lokalnie, zachowując jednocześnie kontrakty integracyjne oraz granice odpowiedzialności systemów.
 
-## Key Design Principles
+## Kluczowe Zasady Projektowe
 
-- Business clarity first: each automation mechanism maps to a process problem or KPI.
-- AI supports language uncertainty; deterministic system logic controls process state, validation, integrations, audit and responsibility.
-- SAP ERP remains source of truth for orders and batches.
-- Jira Cloud remains the operational workflow system for `Complaint` and `Correction` tickets.
-- The complaint orchestrator owns process state, idempotency and audit timeline.
-- Human review is required for missing data, low confidence, SAP mismatch, duplicate suspicion, prompt injection and high-risk cases.
-- Integration ports are provider-neutral and do not depend on vendor SDKs in the Application layer.
-- The MVP is a mock implementation designed to demonstrate feasibility, not a production deployment.
+- Najpierw klarowność biznesowa: każdy mechanizm automatyzacji mapuje się na problem procesu albo KPI.
+- AI obsługuje niepewność języka; deterministyczna logika systemu kontroluje stan procesu, walidację, integracje, audyt i odpowiedzialność.
+- SAP ERP pozostaje źródłem prawdy dla zamówień i partii.
+- Jira Cloud pozostaje operacyjnym systemem workflow dla ticketów `Complaint` i `Correction`.
+- Complaint orchestrator odpowiada za stan procesu, idempotencję i audit timeline.
+- Human review jest wymagany przy brakujących danych, niskiej pewności, niezgodności SAP, podejrzeniu duplikatu, prompt injection i przypadkach wysokiego ryzyka.
+- Porty integracyjne są provider-neutral i nie zależą od SDK dostawców w warstwie Application.
+- MVP jest mock implementation zaprojektowaną do pokazania wykonalności procesu, a nie wdrożeniem produkcyjnym.
 
-Architecture decision details:
+Szczegóły decyzji architektonicznych:
 
 - [ADR 0001 - Event-driven orchestration](docs/adr/0001-use-event-driven-orchestration.md)
 - [ADR 0002 - LLM for triage, not final decisions](docs/adr/0002-use-llm-for-triage-not-final-decisions.md)
 - [ADR 0003 - Human-in-the-loop for risky cases](docs/adr/0003-keep-human-in-the-loop-for-risky-cases.md)
 - [ADR 0004 - Mocks for demo MVP](docs/adr/0004-use-mocks-for-demo-mvp.md)
 
-## Test And Validation Commands
+## Testy I Walidacja
 
 ```bash
 dotnet restore Metalpol.Complaints.sln
@@ -136,27 +136,33 @@ dotnet build Metalpol.Complaints.sln
 dotnet test Metalpol.Complaints.sln
 ```
 
-`dotnet test` includes Playwright UI E2E tests. On a fresh machine, Chromium may need to be installed after the first build:
+`dotnet test` obejmuje testy Playwright UI E2E. Na świeżej maszynie Chromium może wymagać instalacji po pierwszym buildzie:
 
 ```bash
 pwsh tests/Metalpol.Complaints.Tests/bin/Debug/net10.0/playwright.ps1 install chromium
 ```
 
-GitHub Actions in [.github/workflows/ci.yml](.github/workflows/ci.yml) runs restore, build, Chromium installation and `dotnet test`.
+Jeśli na macOS brakuje `pwsh`, można zainstalować PowerShell przez Homebrew:
 
-## Repository Map
+```bash
+brew install powershell
+```
 
-- [docs/01-business-context.md](docs/01-business-context.md) - business context, stakeholders, problems and scope.
-- [docs/02-as-is-event-storming.md](docs/02-as-is-event-storming.md) - current manual process model.
-- [docs/03-to-be-event-storming.md](docs/03-to-be-event-storming.md) - proposed automated process model.
-- [docs/04-solution-specification.md](docs/04-solution-specification.md) - solution architecture and components.
-- [docs/05-ai-automation-design.md](docs/05-ai-automation-design.md) - AI usage, JSON schema, confidence thresholds and guardrails.
-- [docs/06-integration-contracts.md](docs/06-integration-contracts.md) - integration contracts and failure handling.
-- [docs/07-state-machine-and-edge-cases.md](docs/07-state-machine-and-edge-cases.md) - states, transitions and edge cases.
-- [docs/08-kpis-and-reporting.md](docs/08-kpis-and-reporting.md) - KPI definitions and management dashboard.
-- [docs/09-roadmap-tradeoffs.md](docs/09-roadmap-tradeoffs.md) - phased roadmap and architectural trade-offs.
-- [docs/10-demo-runbook.md](docs/10-demo-runbook.md) - API, UI and script demo instructions.
-- [docs/adr/README.md](docs/adr/README.md) - ADR index.
-- [samples/scenarios](samples/scenarios) - sample complaint payloads.
-- [scripts/demo.sh](scripts/demo.sh) and [scripts/demo.ps1](scripts/demo.ps1) - runnable demo scripts.
-- [tests/Metalpol.Complaints.Tests](tests/Metalpol.Complaints.Tests) - automated test suite.
+GitHub Actions w [.github/workflows/ci.yml](.github/workflows/ci.yml) uruchamia restore, build, instalację Chromium i `dotnet test`.
+
+## Mapa Repozytorium
+
+- [docs/01-business-context.md](docs/01-business-context.md) - kontekst biznesowy, interesariusze, problemy i zakres.
+- [docs/02-as-is-event-storming.md](docs/02-as-is-event-storming.md) - model obecnego procesu manualnego.
+- [docs/03-to-be-event-storming.md](docs/03-to-be-event-storming.md) - model proponowanego procesu automatyzacji.
+- [docs/04-solution-specification.md](docs/04-solution-specification.md) - architektura rozwiązania i komponenty.
+- [docs/05-ai-automation-design.md](docs/05-ai-automation-design.md) - użycie AI, JSON schema, progi confidence i guardraile.
+- [docs/06-integration-contracts.md](docs/06-integration-contracts.md) - kontrakty integracyjne i obsługa awarii.
+- [docs/07-state-machine-and-edge-cases.md](docs/07-state-machine-and-edge-cases.md) - stany, przejścia i edge case'y.
+- [docs/08-kpis-and-reporting.md](docs/08-kpis-and-reporting.md) - definicje KPI i management dashboard.
+- [docs/09-roadmap-tradeoffs.md](docs/09-roadmap-tradeoffs.md) - roadmapa etapowa i trade-offy architektoniczne.
+- [docs/10-demo-runbook.md](docs/10-demo-runbook.md) - instrukcje demo dla API, UI i skryptów.
+- [docs/adr/README.md](docs/adr/README.md) - indeks ADR.
+- [samples/scenarios](samples/scenarios) - przykładowe payloady reklamacji.
+- [scripts/demo.sh](scripts/demo.sh) i [scripts/demo.ps1](scripts/demo.ps1) - uruchamialne skrypty demo.
+- [tests/Metalpol.Complaints.Tests](tests/Metalpol.Complaints.Tests) - zautomatyzowany zestaw testów.
