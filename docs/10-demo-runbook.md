@@ -63,11 +63,17 @@ chmod +x scripts/demo.sh
 BASE_URL=http://127.0.0.1:5058 ./scripts/demo.sh
 ```
 
-PowerShell:
+PowerShell (`pwsh`):
 
 ```powershell
 $env:BASE_URL = "http://127.0.0.1:5058"
 ./scripts/demo.ps1
+```
+
+Na macOS/Linux można uruchomić skrypt bez wchodzenia do sesji PowerShell:
+
+```bash
+BASE_URL=http://127.0.0.1:5058 pwsh ./scripts/demo.ps1
 ```
 
 Oba skrypty zakładają domyślnie `http://127.0.0.1:5058`. Adres można zmienić przez `BASE_URL`, np.:

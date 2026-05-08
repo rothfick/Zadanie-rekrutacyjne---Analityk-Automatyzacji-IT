@@ -170,7 +170,7 @@ public sealed class ApiEdgeCaseTests : IClassFixture<WebApplicationFactory<Progr
 
         Assert.Equal("MissingData", reviewJson.RootElement.GetProperty("status").GetString());
         Assert.Equal(JsonValueKind.Null, reviewJson.RootElement.GetProperty("correctionIssueKey").ValueKind);
-        Assert.Equal(JsonValueKind.Null, details.GetProperty("correctionTicketKey").ValueKind);
+        Assert.Equal(JsonValueKind.Null, details.GetProperty("correctionIssueKey").ValueKind);
         Assert.Contains("Ask customer", details.GetProperty("humanReviewReason").GetString());
     }
 

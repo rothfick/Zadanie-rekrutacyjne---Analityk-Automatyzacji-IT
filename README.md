@@ -34,11 +34,17 @@ chmod +x scripts/demo.sh
 BASE_URL=http://127.0.0.1:5058 ./scripts/demo.sh
 ```
 
-Demo w PowerShell:
+Demo w PowerShell (`pwsh`):
 
 ```powershell
 $env:BASE_URL = "http://127.0.0.1:5058"
 ./scripts/demo.ps1
+```
+
+Na macOS/Linux można uruchomić skrypt bez wchodzenia do sesji PowerShell:
+
+```bash
+BASE_URL=http://127.0.0.1:5058 pwsh ./scripts/demo.ps1
 ```
 
 ## Jak Otworzyć UI
@@ -67,7 +73,7 @@ curl -sS -X POST http://127.0.0.1:5058/api/mock/exchange/messages \
 | [missing-order-number.json](samples/scenarios/missing-order-number.json) | `HumanReviewRequired`, bez Jira Cloud `Complaint` | AI nie wymyśla krytycznych danych. |
 | [dimensional-defect-low-confidence.json](samples/scenarios/dimensional-defect-low-confidence.json) | `HumanReviewRequired` | Niska pewność kieruje sprawę do człowieka. |
 | [sap-order-not-found.json](samples/scenarios/sap-order-not-found.json) | `HumanReviewRequired`, niezgodność w SAP ERP | Jira Cloud `Complaint` nie jest tworzony bez walidacji zamówienia. |
-| [prompt-injection-attempt.json](samples/scenarios/prompt-injection-attempt.json) | `PromptInjectionDetected` | Treść maila klienta jest traktowana jako niezaufane wejście. |
+| [prompt-injection-attempt.json](samples/scenarios/prompt-injection-attempt.json) | `HumanReviewRequired`, `promptInjectionDetected = true` w szczegółach reklamacji | Treść maila klienta jest traktowana jako niezaufane wejście; podejrzane instrukcje obniżają confidence i wymagają review. |
 | [duplicate-message.json](samples/scenarios/duplicate-message.json) | `200 OK`, `duplicate = true`, istniejąca reklamacja bez drugiego Jira Cloud `Complaint` | Idempotencja po `sourceMessageId`. |
 | [logistics-complaint.json](samples/scenarios/logistics-complaint.json) | `Logistics` | Kontrolowana taksonomia wad wspiera raportowanie. |
 | [material-defect-requires-correction.json](samples/scenarios/material-defect-requires-correction.json) | Correction po akceptacji | AI przygotowuje kontekst, a człowiek potwierdza decyzję jakościową. |

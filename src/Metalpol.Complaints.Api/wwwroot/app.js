@@ -382,7 +382,7 @@ function renderComplaintSummaryFromDetails(complaint) {
     ["Status", complaint.status],
     ["Source message", complaint.messageId],
     ["Jira Complaint", complaint.jiraComplaintKey],
-    ["Correction", complaint.correctionTicketKey]
+    ["Correction", complaint.correctionIssueKey]
   ];
   if (state.lastIntakeResponse?.complaintId === complaint.complaintId) {
     summaryRows.push(["Duplicate", state.lastIntakeResponse.duplicate]);
@@ -411,7 +411,7 @@ function renderComplaintDetails(complaint) {
     ["Customer match", complaint.customerId],
     ["SAP verification", sapStatus],
     ["Jira Complaint key", complaint.jiraComplaintKey],
-    ["Correction key", complaint.correctionTicketKey],
+    ["Correction key", complaint.correctionIssueKey],
     ["Prompt injection", complaint.promptInjectionDetected],
     ["Human review reason", complaint.humanReviewReason],
     ["Attachments", summarizeAttachments(complaint.attachments)],
@@ -641,7 +641,7 @@ function canReview(complaint) {
   }
 
   return ["ResponseDrafted", "HumanReviewRequired", "MissingData", "CustomerResponseApproved"].includes(complaint.status)
-    && !complaint.correctionTicketKey;
+    && !complaint.correctionIssueKey;
 }
 
 function setReviewEnabled(enabled, complaint = null) {

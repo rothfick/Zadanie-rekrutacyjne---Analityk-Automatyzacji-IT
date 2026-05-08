@@ -49,7 +49,7 @@ public sealed record ComplaintDetailsResponse(
     bool PromptInjectionDetected,
     IReadOnlyCollection<string> MissingFields,
     string? JiraComplaintKey,
-    string? CorrectionTicketKey,
+    string? CorrectionIssueKey,
     string? ResponseDraft,
     string? HumanReviewReason,
     IReadOnlyCollection<AttachmentResponse> Attachments);
