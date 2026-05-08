@@ -2,6 +2,7 @@ const state = {
   scenarios: [],
   selectedScenarioId: "",
   selectedComplaintId: localStorage.getItem("metalpol.selectedComplaintId") || "",
+  lastIntakeResponse: null,
   complaint: null,
   timeline: []
 };
@@ -283,6 +284,7 @@ async function processSelectedScenario() {
     });
 
     state.selectedComplaintId = intake.complaintId;
+    state.lastIntakeResponse = intake;
     localStorage.setItem("metalpol.selectedComplaintId", state.selectedComplaintId);
     renderIntakeSummary(intake);
     await refreshSelectedComplaint();
@@ -304,7 +306,8 @@ function renderIntakeSummary(intake) {
     ["Jira Complaint", intake.jiraComplaintKey],
     ["AI category", intake.defectCategory],
     ["AI confidence", formatConfidence(intake.aiConfidence)],
-    ["Human review required", display(intake.humanReviewRequired)]
+    ["Human review required", display(intake.humanReviewRequired)],
+    ["Duplicate", intake.duplicate]
   ].map(([label, value]) => `
     <div class="summary-line">
       <span>${escapeHtml(label)}</span>
@@ -369,18 +372,24 @@ function renderEmptyComplaint() {
 
 function clearSelectedComplaint() {
   state.selectedComplaintId = "";
+  state.lastIntakeResponse = null;
   localStorage.removeItem("metalpol.selectedComplaintId");
 }
 
 function renderComplaintSummaryFromDetails(complaint) {
-  els.complaintSummary.className = "complaint-summary";
-  els.complaintSummary.innerHTML = [
+  const summaryRows = [
     ["Complaint id", complaint.complaintId],
     ["Status", complaint.status],
     ["Source message", complaint.messageId],
     ["Jira Complaint", complaint.jiraComplaintKey],
     ["Correction", complaint.correctionTicketKey]
-  ].map(([label, value]) => `
+  ];
+  if (state.lastIntakeResponse?.complaintId === complaint.complaintId) {
+    summaryRows.push(["Duplicate", state.lastIntakeResponse.duplicate]);
+  }
+
+  els.complaintSummary.className = "complaint-summary";
+  els.complaintSummary.innerHTML = summaryRows.map(([label, value]) => `
     <div class="summary-line">
       <span>${escapeHtml(label)}</span>
       <strong class="${statusClass(value)}">${escapeHtml(display(value))}</strong>

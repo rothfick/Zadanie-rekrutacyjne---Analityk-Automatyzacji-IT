@@ -71,6 +71,8 @@ public sealed class ApiEdgeCaseTests : IClassFixture<WebApplicationFactory<Progr
     public async Task DuplicateMessagePostReturnsExistingComplaintAndAddsTimelineEvent()
     {
         using var client = _factory.CreateClient();
+        await client.PostAsync("/api/demo/reset", null);
+
         var messageId = $"api-duplicate-{Guid.NewGuid():N}";
         var request = CreateRequest(
             messageId,
@@ -80,7 +82,7 @@ public sealed class ApiEdgeCaseTests : IClassFixture<WebApplicationFactory<Progr
         var first = await client.PostAsJsonAsync("/api/mock/exchange/messages", request);
         var second = await client.PostAsJsonAsync("/api/mock/exchange/messages", request);
         Assert.Equal(HttpStatusCode.Created, first.StatusCode);
-        Assert.Equal(HttpStatusCode.Created, second.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, second.StatusCode);
 
         using var firstJson = await JsonDocument.ParseAsync(await first.Content.ReadAsStreamAsync());
         using var secondJson = await JsonDocument.ParseAsync(await second.Content.ReadAsStreamAsync());
@@ -89,12 +91,57 @@ public sealed class ApiEdgeCaseTests : IClassFixture<WebApplicationFactory<Progr
         Assert.Equal(complaintId, secondJson.RootElement.GetProperty("complaintId").GetString());
         Assert.Equal("COMPLAINT-1001", firstJson.RootElement.GetProperty("jiraComplaintKey").GetString());
         Assert.Equal("COMPLAINT-1001", secondJson.RootElement.GetProperty("jiraComplaintKey").GetString());
+        Assert.False(firstJson.RootElement.GetProperty("duplicate").GetBoolean());
+        Assert.True(secondJson.RootElement.GetProperty("duplicate").GetBoolean());
 
         var timeline = await client.GetFromJsonAsync<JsonElement[]>($"/api/complaints/{complaintId}/timeline");
 
         Assert.NotNull(timeline);
         Assert.Equal(1, timeline!.Count(item => item.GetProperty("eventName").GetString() == "JiraComplaintCreated"));
         Assert.Contains(timeline, item => item.GetProperty("eventName").GetString() == "DuplicateLinked");
+    }
+
+    [Fact]
+    public async Task DashboardKpisCountSapMismatchEventsAfterReviewChangesStatus()
+    {
+        using var client = _factory.CreateClient();
+        await client.PostAsync("/api/demo/reset", null);
+
+        var intakeResponse = await client.PostAsJsonAsync(
+            "/api/mock/exchange/messages",
+            CreateRequest(
+                $"api-sap-missing-{Guid.NewGuid():N}",
+                "Complaint ORDER-9999",
+                "We found scratches and paint damage on parts from ORDER-9999. Batch BATCH-9999."));
+        Assert.Equal(HttpStatusCode.Created, intakeResponse.StatusCode);
+
+        using var intakeJson = await JsonDocument.ParseAsync(await intakeResponse.Content.ReadAsStreamAsync());
+        var complaintId = intakeJson.RootElement.GetProperty("complaintId").GetString();
+
+        Assert.Equal("HumanReviewRequired", intakeJson.RootElement.GetProperty("status").GetString());
+
+        var timeline = await client.GetFromJsonAsync<JsonElement[]>($"/api/complaints/{complaintId}/timeline");
+        Assert.NotNull(timeline);
+        Assert.Contains(timeline!, item => item.GetProperty("eventName").GetString() == "SapMismatchDetected");
+
+        var kpisBeforeReview = await client.GetFromJsonAsync<JsonElement>("/api/dashboard/kpis");
+        Assert.Equal(100m, kpisBeforeReview.GetProperty("sapVerificationFailureRatePercent").GetDecimal());
+
+        var review = await client.PostAsJsonAsync(
+            $"/api/complaints/{complaintId}/review/approve",
+            new
+            {
+                reviewer = "service.specialist",
+                decision = "RequestMoreInfo",
+                notes = "Ask customer to verify the SAP order number."
+            });
+        review.EnsureSuccessStatusCode();
+
+        var details = await client.GetFromJsonAsync<JsonElement>($"/api/complaints/{complaintId}");
+        Assert.Equal("MissingData", details.GetProperty("status").GetString());
+
+        var kpisAfterReview = await client.GetFromJsonAsync<JsonElement>("/api/dashboard/kpis");
+        Assert.Equal(100m, kpisAfterReview.GetProperty("sapVerificationFailureRatePercent").GetDecimal());
     }
 
     [Fact]

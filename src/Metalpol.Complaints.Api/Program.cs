@@ -4,6 +4,7 @@ using Metalpol.Complaints.Application.Dtos;
 using Metalpol.Complaints.Application.Orchestration;
 using Metalpol.Complaints.Application.Ports;
 using Metalpol.Complaints.Application.Review;
+using Metalpol.Complaints.Domain.Events;
 using Metalpol.Complaints.Domain.ValueObjects;
 using Metalpol.Complaints.Infrastructure.Fakes;
 
@@ -81,14 +82,20 @@ app.MapPost(
             CancellationToken cancellationToken) =>
         {
             var email = request.ToIncomingEmail(clock);
+            var duplicate = await repository.GetByMessageIdAsync(email.MessageId, cancellationToken) is not null;
             var result = await orchestrator.StartIntakeAsync(email, cancellationToken);
             var complaint = await repository.GetByIdAsync(result.ComplaintId, cancellationToken);
 
-            return complaint is null
-                ? Results.Problem("Complaint intake completed but complaint record was not found.")
-                : Results.Created(
-                    $"/api/complaints/{complaint.Id.Value}",
-                    ApiContractMapper.ToIntakeResponse(complaint));
+            if (complaint is null)
+            {
+                return Results.Problem("Complaint intake completed but complaint record was not found.");
+            }
+
+            var response = ApiContractMapper.ToIntakeResponse(complaint, duplicate);
+
+            return duplicate
+                ? Results.Ok(response)
+                : Results.Created($"/api/complaints/{complaint.Id.Value}", response);
         })
     .WithName("MockExchangeMessage")
     .WithTags("Mock Exchange");
@@ -163,11 +170,22 @@ app.MapGet(
         "/api/dashboard/kpis",
         async (
             IComplaintRepository repository,
+            IEventLog eventLog,
             CancellationToken cancellationToken) =>
         {
             var complaints = await repository.ListAsync(cancellationToken);
+            var sapVerificationFailureCount = 0;
 
-            return Results.Ok(ApiContractMapper.ToDashboardResponse(complaints));
+            foreach (var complaint in complaints)
+            {
+                var timeline = await eventLog.GetTimelineAsync(complaint.Id, cancellationToken);
+                if (timeline.Any(item => item.EventName == nameof(SapMismatchDetected)))
+                {
+                    sapVerificationFailureCount++;
+                }
+            }
+
+            return Results.Ok(ApiContractMapper.ToDashboardResponse(complaints, sapVerificationFailureCount));
         })
     .WithName("GetDashboardKpis")
     .WithTags("Dashboard");

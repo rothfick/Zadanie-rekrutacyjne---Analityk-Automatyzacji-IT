@@ -33,7 +33,8 @@ public sealed record ComplaintIntakeResponse(
     DefectCategory DefectCategory,
     decimal? AiConfidence,
     string? JiraComplaintKey,
-    bool HumanReviewRequired);
+    bool HumanReviewRequired,
+    bool Duplicate);
 
 public sealed record ComplaintDetailsResponse(
     string ComplaintId,
@@ -89,7 +90,7 @@ public sealed record DashboardKpiResponse(
 
 public static class ApiContractMapper
 {
-    public static ComplaintIntakeResponse ToIntakeResponse(Complaint complaint)
+    public static ComplaintIntakeResponse ToIntakeResponse(Complaint complaint, bool duplicate = false)
     {
         return new ComplaintIntakeResponse(
             complaint.Id.Value,
@@ -100,7 +101,8 @@ public static class ApiContractMapper
             complaint.DefectCategory,
             complaint.AiTriage?.ConfidenceScore,
             complaint.JiraComplaint?.IssueKey,
-            complaint.Status == ComplaintStatus.HumanReviewRequired);
+            complaint.Status == ComplaintStatus.HumanReviewRequired,
+            duplicate);
     }
 
     public static ComplaintDetailsResponse ToDetailsResponse(Complaint complaint)
@@ -139,13 +141,14 @@ public static class ApiContractMapper
             result.Error);
     }
 
-    public static DashboardKpiResponse ToDashboardResponse(IReadOnlyCollection<Complaint> complaints)
+    public static DashboardKpiResponse ToDashboardResponse(
+        IReadOnlyCollection<Complaint> complaints,
+        int sapVerificationFailureCount = 0)
     {
         var total = complaints.Count;
         var denominator = total == 0 ? 1 : total;
         var humanReviewCount = complaints.Count(complaint => complaint.Status == ComplaintStatus.HumanReviewRequired);
         var jiraCreatedCount = complaints.Count(complaint => complaint.JiraComplaint is not null);
-        var sapFailureCount = complaints.Count(complaint => complaint.Status == ComplaintStatus.SapMismatch);
 
         return new DashboardKpiResponse(
             TotalComplaints: total,
@@ -174,7 +177,7 @@ public static class ApiContractMapper
                 .GroupBy(confidence => ConfidenceBucket(confidence!.Value))
                 .ToDictionary(group => group.Key, group => group.Count()),
             JiraIssueCreationSuccessRatePercent: Math.Round(jiraCreatedCount * 100m / denominator, 2),
-            SapVerificationFailureRatePercent: Math.Round(sapFailureCount * 100m / denominator, 2));
+            SapVerificationFailureRatePercent: Math.Round(sapVerificationFailureCount * 100m / denominator, 2));
     }
 
     private static bool IsBacklogItem(Complaint complaint)

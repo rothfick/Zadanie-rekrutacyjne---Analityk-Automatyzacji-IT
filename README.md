@@ -68,7 +68,7 @@ curl -sS -X POST http://127.0.0.1:5058/api/mock/exchange/messages \
 | [dimensional-defect-low-confidence.json](samples/scenarios/dimensional-defect-low-confidence.json) | `HumanReviewRequired` | Niska pewność kieruje sprawę do człowieka. |
 | [sap-order-not-found.json](samples/scenarios/sap-order-not-found.json) | `HumanReviewRequired`, niezgodność w SAP ERP | Jira Cloud `Complaint` nie jest tworzony bez walidacji zamówienia. |
 | [prompt-injection-attempt.json](samples/scenarios/prompt-injection-attempt.json) | `PromptInjectionDetected` | Treść maila klienta jest traktowana jako niezaufane wejście. |
-| [duplicate-message.json](samples/scenarios/duplicate-message.json) | Istniejąca reklamacja bez drugiego Jira Cloud `Complaint` | Idempotencja po `sourceMessageId`. |
+| [duplicate-message.json](samples/scenarios/duplicate-message.json) | `200 OK`, `duplicate = true`, istniejąca reklamacja bez drugiego Jira Cloud `Complaint` | Idempotencja po `sourceMessageId`. |
 | [logistics-complaint.json](samples/scenarios/logistics-complaint.json) | `Logistics` | Kontrolowana taksonomia wad wspiera raportowanie. |
 | [material-defect-requires-correction.json](samples/scenarios/material-defect-requires-correction.json) | Correction po akceptacji | AI przygotowuje kontekst, a człowiek potwierdza decyzję jakościową. |
 
