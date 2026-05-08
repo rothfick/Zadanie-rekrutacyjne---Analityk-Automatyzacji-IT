@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Metalpol Complaint Automation Control Center</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <main class="desktop-shell">
+    <section class="app-window" aria-label="Metalpol Complaint Automation Control Center">
+      <header class="window-bar">
+        <div class="window-controls" aria-hidden="true">
+          <span class="dot dot-close"></span>
+          <span class="dot dot-minimize"></span>
+          <span class="dot dot-maximize"></span>
+        </div>
+        <div class="window-title">
+          <span class="product-kicker">Metalpol MVP</span>
+          <strong>Complaint Automation Demo</strong>
+        </div>
+          <div class="window-status">
+          <span id="healthBadge" class="badge badge-muted">API: checking</span>
+          <span id="selectedComplaintBadge" class="badge badge-soft">Brak wybranej reklamacji</span>
+          <button id="resetDemoButton" class="button button-secondary compact-button" type="button">Reset demo</button>
+        </div>
+      </header>
+
+      <div id="errorBanner" class="error-banner" role="alert" hidden></div>
+
+      <div class="content">
+        <section id="dashboard" class="hero-panel">
+          <div class="hero-copy">
+            <p class="eyebrow">Demo procesu reklamacji</p>
+            <h1>Metalpol Complaint Automation Control Center</h1>
+            <p class="lead">
+              Prosty pokaz procesu: mail z reklamacją trafia do intake, mock AI triage wyciąga dane,
+              SAP ERP weryfikuje order i batch, Jira Cloud dostaje Complaint, a człowiek
+              zatwierdza decyzję jakościową.
+            </p>
+            <p class="business-problem">
+              <strong>Problem biznesowy:</strong> opóźnione maile, ręczne przepisywanie danych,
+              niespójna klasyfikacja, brak metryk oraz ręczne łączenie Microsoft 365 / Exchange,
+              SAP ERP i Jira Cloud.
+            </p>
+            <p class="demo-state-note">
+              Demo działa na stanie in-memory. Restart API czyści reklamacje i KPI, a scenariusze można uruchamiać ponownie.
+            </p>
+          </div>
+
+          <aside class="demo-steps" aria-label="Kroki demo">
+            <div class="step-pill active">
+              <span>1</span>
+              <strong>Wybierz scenariusz</strong>
+              <small>np. wada wizualna, brak orderu, prompt injection</small>
+            </div>
+            <div class="step-pill">
+              <span>2</span>
+              <strong>Zobacz pipeline</strong>
+              <small>status, SAP, Jira, AI confidence i timeline</small>
+            </div>
+            <div class="step-pill">
+              <span>3</span>
+              <strong>Zatwierdź review</strong>
+              <small>ConfirmDefect tworzy mock Jira Correction</small>
+            </div>
+          </aside>
+        </section>
+
+        <section class="kpi-strip" aria-label="KPI">
+          <div class="strip-heading">
+            <div>
+              <p class="eyebrow">KPI snapshot</p>
+              <h2>Co widzi management</h2>
+            </div>
+            <button id="refreshKpisButton" class="button button-secondary" type="button">Odśwież KPI</button>
+          </div>
+          <div class="kpi-grid" id="dashboardKpis" aria-live="polite">
+            <article class="kpi-card loading-card"><span>Ładowanie KPI</span></article>
+            <article class="kpi-card loading-card"><span>Ładowanie KPI</span></article>
+            <article class="kpi-card loading-card"><span>Ładowanie KPI</span></article>
+            <article class="kpi-card loading-card"><span>Ładowanie KPI</span></article>
+            <article class="kpi-card loading-card"><span>Ładowanie KPI</span></article>
+          </div>
+        </section>
+
+        <section id="scenarios" class="two-column first-flow">
+          <article class="flow-card primary-flow">
+            <div class="card-heading">
+              <span class="step-number">1</span>
+              <div>
+                <p class="eyebrow">Start demo</p>
+                <h2>Wybierz jedną reklamację</h2>
+                <p>Najprościej zacząć od scenariusza "Happy path: wada wizualna".</p>
+              </div>
+            </div>
+
+            <label class="field-label" for="scenarioSelect">Scenariusz</label>
+            <select id="scenarioSelect" class="input-control">
+              <option>Ładowanie scenariuszy...</option>
+            </select>
+
+            <div id="scenarioInfo" class="scenario-info" aria-live="polite">
+              Wybierz scenariusz, aby zobaczyć, jaki problem biznesowy demonstruje.
+            </div>
+
+            <button id="processScenarioButton" class="button button-primary full-width" type="button">
+              Przetwórz scenariusz
+            </button>
+          </article>
+
+          <article id="result" class="flow-card result-card">
+            <div class="card-heading">
+              <span class="step-number">2</span>
+              <div>
+                <p class="eyebrow">Wynik</p>
+              <h2>Co system zrobił?</h2>
+              <p>Status, Jira Complaint, AI confidence i potrzeba human review w jednym miejscu.</p>
+            </div>
+          </div>
+          <div id="complaintSummary" class="complaint-summary empty-state">
+            Brak wybranej reklamacji. Wybierz scenariusz i kliknij "Przetwórz scenariusz".
+          </div>
+          <div id="nextActionHint" class="next-action-hint empty-state">
+            Po przetworzeniu scenariusza pokażemy następny najlepszy krok w demo.
+          </div>
+        </article>
+      </section>
+
+        <section id="pipeline" class="two-column">
+          <article class="flow-card">
+            <div class="card-heading">
+              <span class="step-number">2</span>
+              <div>
+                <p class="eyebrow">Pipeline</p>
+                <h2>Najważniejsze dane reklamacji</h2>
+                <p>Dane z maila, mock AI triage, SAP ERP, Jira Cloud i draft odpowiedzi w jednym miejscu.</p>
+              </div>
+              <button id="refreshComplaintButton" class="button button-secondary compact-button" type="button">Odśwież</button>
+            </div>
+            <div id="complaintDetails" class="details-grid empty-state">
+              Brak danych reklamacji. Najpierw przetwórz scenariusz demo.
+            </div>
+          </article>
+
+          <article class="flow-card">
+            <div class="card-heading">
+              <span class="step-number">2</span>
+              <div>
+                <p class="eyebrow">Timeline</p>
+                <h2>Eventy procesu</h2>
+                <p>To jest Event Storming połączony z działającym MVP.</p>
+              </div>
+            </div>
+            <div id="timeline" class="timeline empty-state">
+              Timeline pojawi się po intake reklamacji.
+            </div>
+          </article>
+        </section>
+
+        <section id="review" class="two-column">
+          <article class="flow-card review-card">
+            <div class="card-heading">
+              <span class="step-number">3</span>
+              <div>
+                <p class="eyebrow">Human review</p>
+                <h2>Decyzja specjalisty</h2>
+                <p>AI pomaga w triage i drafcie, ale końcowa decyzja biznesowa zostaje po stronie człowieka.</p>
+              </div>
+            </div>
+
+            <div class="review-defaults">
+              <label class="field-label" for="reviewerInput">Specjalista</label>
+              <input id="reviewerInput" class="input-control" value="Service Specialist Demo">
+
+              <label class="field-label" for="reviewNotes">Notes</label>
+              <textarea id="reviewNotes" class="input-control textarea-control">Validated during demo review.</textarea>
+            </div>
+
+            <div class="review-actions" aria-label="Review decisions">
+              <button class="button button-primary" type="button" data-review-decision="ConfirmDefect">
+                <span>Potwierdź wadę</span>
+                <small>ConfirmDefect</small>
+              </button>
+              <button class="button button-secondary" type="button" data-review-decision="RequestMoreInfo">
+                <span>Poproś o dane</span>
+                <small>RequestMoreInfo</small>
+              </button>
+              <button class="button button-secondary" type="button" data-review-decision="RejectComplaint">
+                <span>Odrzuć zgłoszenie</span>
+                <small>RejectComplaint</small>
+              </button>
+            </div>
+
+            <div id="reviewResult" class="review-result empty-state">
+              Po przetworzeniu reklamacji kliknij ConfirmDefect, aby pokazać utworzenie mock Jira Correction.
+            </div>
+          </article>
+
+          <article id="kpis" class="flow-card">
+            <div class="card-heading">
+              <span class="step-number">4</span>
+              <div>
+                <p class="eyebrow">Efekt biznesowy</p>
+                <h2>Metryki po uruchomieniu</h2>
+                <p>KPI odpowiadają na ból CEO: backlog, human review, SAP issues i skuteczność Jira Cloud.</p>
+              </div>
+            </div>
+            <div id="kpiDetails" class="metric-list empty-state">
+              KPI zostaną załadowane automatycznie.
+            </div>
+          </article>
+        </section>
+
+        <section id="architecture" class="architecture-panel">
+          <div class="strip-heading">
+            <div>
+              <p class="eyebrow">Granice procesu</p>
+              <h2>Granice odpowiedzialności</h2>
+            </div>
+          </div>
+          <div class="architecture-grid">
+            <article>
+              <h3>AI jako wsparcie</h3>
+              <p>AI obsługuje nieustrukturyzowany język: ekstrakcję, klasyfikację, streszczenie i draft.</p>
+            </article>
+            <article>
+              <h3>System prowadzi proces</h3>
+              <p>Orchestrator obsługuje stan, reguły, idempotencję, audyt i odpowiedzialność biznesową.</p>
+            </article>
+            <article>
+              <h3>Źródła prawdy zostają</h3>
+              <p>SAP ERP pozostaje źródłem orderów i batchy, a Jira Cloud systemem workflow.</p>
+            </article>
+            <article>
+              <h3>Mock MVP</h3>
+              <p>Integracje są deterministycznymi mockami, więc demo jest bezpieczne i powtarzalne.</p>
+            </article>
+          </div>
+        </section>
+      </div>
+    </section>
+  </main>
+
+  <script src="/app.js"></script>
+</body>
+</html>

@@ -1,5 +1,6 @@
 using System.Text.Json.Serialization;
 using Metalpol.Complaints.Api;
+using Metalpol.Complaints.Application.Dtos;
 using Metalpol.Complaints.Application.Orchestration;
 using Metalpol.Complaints.Application.Ports;
 using Metalpol.Complaints.Application.Review;
@@ -30,7 +31,45 @@ builder.Services.AddScoped<IComplaintReviewService, ComplaintReviewService>();
 
 var app = builder.Build();
 
+app.UseDefaultFiles();
+app.UseStaticFiles();
+
 app.MapGet("/health", () => Results.Text("OK"));
+
+app.MapGet(
+        "/api/demo/scenarios",
+        () => Results.Ok(DemoScenarioCatalog.List()))
+    .WithName("ListDemoScenarios")
+    .WithTags("Demo");
+
+app.MapGet(
+        "/api/demo/scenarios/{id}",
+        (string id) =>
+        {
+            var scenario = DemoScenarioCatalog.ReadScenarioJson(id);
+
+            return scenario is null
+                ? Results.NotFound(new { error = $"Demo scenario {id} was not found." })
+                : Results.Text(scenario, "application/json");
+        })
+    .WithName("GetDemoScenario")
+    .WithTags("Demo");
+
+app.MapPost(
+        "/api/demo/reset",
+        (
+            InMemoryComplaintRepository repository,
+            InMemoryEventLog eventLog,
+            FakeJiraClient jira) =>
+        {
+            repository.Clear();
+            eventLog.Clear();
+            jira.Reset();
+
+            return Results.Ok(new { reset = true, message = "Demo state reset." });
+        })
+    .WithName("ResetDemoState")
+    .WithTags("Demo");
 
 app.MapPost(
         "/api/mock/exchange/messages",
