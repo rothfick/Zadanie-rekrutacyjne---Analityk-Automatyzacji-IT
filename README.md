@@ -75,7 +75,7 @@ curl -sS -X POST http://127.0.0.1:5058/api/mock/exchange/messages \
 | [sap-order-not-found.json](samples/scenarios/sap-order-not-found.json) | `HumanReviewRequired`, niezgodność w SAP ERP | Jira Cloud `Complaint` nie jest tworzony bez walidacji zamówienia. |
 | [prompt-injection-attempt.json](samples/scenarios/prompt-injection-attempt.json) | `HumanReviewRequired`, `promptInjectionDetected = true` w szczegółach reklamacji | Treść maila klienta jest traktowana jako niezaufane wejście; podejrzane instrukcje obniżają confidence i wymagają review. |
 | [duplicate-message.json](samples/scenarios/duplicate-message.json) | `200 OK`, `duplicate = true`, istniejąca reklamacja bez drugiego Jira Cloud `Complaint` | Idempotencja po `sourceMessageId`. |
-| [logistics-complaint.json](samples/scenarios/logistics-complaint.json) | `Logistics` | Kontrolowana taksonomia wad wspiera raportowanie. |
+| [logistics-complaint.json](samples/scenarios/logistics-complaint.json) | `ResponseDrafted`, `defectCategory = Logistics` | Kontrolowana taksonomia wad wspiera raportowanie. |
 | [material-defect-requires-correction.json](samples/scenarios/material-defect-requires-correction.json) | Correction po akceptacji | AI przygotowuje kontekst, a człowiek potwierdza decyzję jakościową. |
 
 ## Przegląd Architektury
