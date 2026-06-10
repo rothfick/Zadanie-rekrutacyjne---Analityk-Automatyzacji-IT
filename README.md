@@ -1,3 +1,20 @@
+<!-- README_PRESENTATION_START -->
+<p align="center">
+  <img src="https://capsule-render.vercel.app/api?type=rect&height=140&color=0:0B2545,100:2E74B5&text=Metalpol%20AI%20Complaint%20Automation&fontColor=FFFFFF&fontSize=30&fontAlignY=42&desc=AI-assisted%20complaint%20workflow%20with%20QA%20guardrails&descAlignY=68&descSize=15" alt="Metalpol AI Complaint Automation banner" />
+</p>
+
+<p align="center">
+  <img alt="Case Study: AI QA" src="https://img.shields.io/badge/Case%20Study-AI%20QA-0B2545?style=for-the-badge" /> <img alt=".NET: Minimal API" src="https://img.shields.io/badge/.NET-Minimal%20API-512BD4?style=for-the-badge" /> <img alt="Testing: xUnit + Playwright" src="https://img.shields.io/badge/Testing-xUnit%20%2B%20Playwright-2E74B5?style=for-the-badge" /> <img alt="Workflow: Human Review" src="https://img.shields.io/badge/Workflow-Human%20Review-1F7A5C?style=for-the-badge" /> <img alt="Architecture: DDD + Ports" src="https://img.shields.io/badge/Architecture-DDD%20%2B%20Ports-5B5FC7?style=for-the-badge" />
+</p>
+
+<table>
+  <tr><td><strong>Role signal</strong></td><td>AI QA, test strategy, workflow validation, backend orchestration</td></tr>
+<tr><td><strong>What to inspect</strong></td><td><code>ComplaintIntakeOrchestrator</code>, edge-case tests, AI guardrail docs</td></tr>
+<tr><td><strong>Best for</strong></td><td>Senior QA, QA AI Engineer, SDET, test strategy interviews</td></tr>
+</table>
+
+<!-- README_PRESENTATION_END -->
+
 # Metalpol AI Complaint Automation
 
 Portfolio case study for AI-assisted complaint intake in a regulated, operationally realistic manufacturing environment.
